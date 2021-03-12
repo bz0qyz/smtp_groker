@@ -117,9 +117,6 @@ class Profiles():
         else:
             raise ValueError("Saved profile: {}. Does not exist".format(name))
 
-""" Create an object to use saved profiles """
-objProfiles = Profiles(PROFILE_FILE)
-
 
 """
 ## Functions
@@ -164,6 +161,7 @@ def print_smtp_except(err):
 """
 
 """ Load or Create a profile for execution """
+objProfiles = Profiles(PROFILE_FILE)
 if "profile" in args and args.profile:
     """ Open a saved profile if '--profile' is specified """
     profile = objProfiles.get(args.profile)
