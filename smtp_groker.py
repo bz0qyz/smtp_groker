@@ -72,6 +72,9 @@ elif args.verbose == 1:
 else:
     log.setLevel(logging.INFO)
 
+"""
+## Class Objects
+"""
 class Profiles():
     """Object for working with the saved profiles."""
     def __init__(self, profiles_file):
@@ -118,36 +121,9 @@ class Profiles():
 objProfiles = Profiles(PROFILE_FILE)
 
 
-""" Load or Create a profile for execution """
-if "profile" in args and args.profile:
-    """ Open a saved profile if '--profile' is specified """
-    profile = objProfiles.get(args.profile)
-else:
-    profile = {
-        "host": args.smtp_host,
-        "user": args.smtp_user,
-        "password": args.smtp_password,
-        "sender": args.sender,
-        "recipient": args.recipient
-    }
-    profile["auth"] = True if args.smtp_user else False
-
-
-""" Save arguments to a profile if '--save' is specified """
-if "save_profile" in args and args.save_profile:
-    log.info("Saving profile: {}".format(args.save_profile))
-    objProfiles.save(args.save_profile, profile)
-
-""" If SSL is used, change the port to smtps (465) """
-if args.use_ssl and args.smtp_port == 587:
-    args.smtp_port = 465
-
-""" If a user is specified and no password, prompt for the password """
-if profile["auth"] and not profile["password"]:
-    profile["password"] = getpass(prompt="Enter a password for SMTP user '{}': ".format(args.smtp_user))
-
-
-
+"""
+## Functions
+"""
 def closeup():
     try:
         smtpObj.quit()
@@ -182,6 +158,38 @@ def print_smtp_except(err):
                   log.error("{}: {}".format(key, val))
           else:
               log.critical(err)
+
+"""
+## Main Section
+"""
+
+""" Load or Create a profile for execution """
+if "profile" in args and args.profile:
+    """ Open a saved profile if '--profile' is specified """
+    profile = objProfiles.get(args.profile)
+else:
+    profile = {
+        "host": args.smtp_host,
+        "user": args.smtp_user,
+        "password": args.smtp_password,
+        "sender": args.sender,
+        "recipient": args.recipient
+    }
+    profile["auth"] = True if args.smtp_user else False
+
+
+""" Save arguments to a profile if '--save' is specified """
+if "save_profile" in args and args.save_profile:
+    log.info("Saving profile: {}".format(args.save_profile))
+    objProfiles.save(args.save_profile, profile)
+
+""" If SSL is used, change the port to smtps (465) """
+if args.use_ssl and args.smtp_port == 587:
+    args.smtp_port = 465
+
+""" If a user is specified and no password, prompt for the password """
+if profile["auth"] and not profile["password"]:
+    profile["password"] = getpass(prompt="Enter a password for SMTP user '{}': ".format(args.smtp_user))
 
 """ Open a connection to the SMTP Host """
 try:
